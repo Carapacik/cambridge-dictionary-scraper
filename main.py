@@ -101,10 +101,16 @@ for letter in letters:
     time.sleep(1)
 
     for wordBegin in data1:
+        # if starts with '
+        wordWithFixedFirstElement = wordBegin
+        if wordBegin[0] == "'":
+            wordWithFixedFirstElement = wordBegin[1:]
         correctWord = (
-            wordBegin.replace(" & ", "-")
+            wordWithFixedFirstElement.replace("é", "e")
+            .replace(" & ", "-")
             .replace(", ", "-")
             .replace(". ", "-")
+            .replace(" '", "-")
             .replace("/", "-")
             .replace("'", "-")
             .replace(",", "-")
