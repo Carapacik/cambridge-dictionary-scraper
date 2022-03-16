@@ -5,10 +5,12 @@ from selenium_stealth import stealth
 from selenium.webdriver.common.by import By
 from typing import Final
 
-lettersNumber: Final = 5
-baseUrl: Final = "https://dictionary.cambridge.org/browse/english"
+baseUrl: Final = r"https://dictionary.cambridge.org/browse/english"
 chromeDriverPath: Final = r"C:/Users/User/Documents/chromedriver.exe"
-wordsFileName: Final = "words.txt"
+lettersNumber: Final = 5
+failsFileName: Final = "fails"
+wordsFileName: Final = "words"
+wordsFileFormat: Final = "txt"
 
 options = webdriver.ChromeOptions()
 
@@ -54,7 +56,6 @@ def findWordsInBegin(wordBeginBlock):
     return data
 
 
-file = open(wordsFileName, "w")
 letters = [
     "a",
     "b",
@@ -83,21 +84,27 @@ letters = [
     "y",
     "z",
 ]
+
+fileWithFails = open(f"{failsFileName}.{wordsFileFormat}", "w")
+fileWithWords = open(f"{wordsFileName}.{wordsFileFormat}", "w")
 for letter in letters:
     url = f"{baseUrl}/{letter}/"
     driver.get(url)
-    block1 = driver.find_element(
-        By.CSS_SELECTOR,
-        "body > div.cc.fon > div > div > div.hfr-m.ltab.lp-m_l-15 > div.x.lmt-15 > div.hfl-s.lt2b.lmt-10.lmb-25.lp-s_r-20 > div.hdf.ff-50.lmt-15 > div.lc.lpr-2 > ul",
-    )
-    data1 = findWords(block1)
-    block2 = driver.find_element(
-        By.CSS_SELECTOR,
-        "body > div.cc.fon > div > div > div.hfr-m.ltab.lp-m_l-15 > div.x.lmt-15 > div.hfl-s.lt2b.lmt-10.lmb-25.lp-s_r-20 > div.hdf.ff-50.lmt-15 > div.lpl-2 > ul",
-    )
-    data2 = findWords(block2)
+    try:
+        block1 = driver.find_element(
+            By.CSS_SELECTOR,
+            "body > div.cc.fon > div > div > div.hfr-m.ltab.lp-m_l-15 > div.x.lmt-15 > div.hfl-s.lt2b.lmt-10.lmb-25.lp-s_r-20 > div.hdf.ff-50.lmt-15 > div.lc.lpr-2 > ul",
+        )
+        data1 = findWords(block1)
+        block2 = driver.find_element(
+            By.CSS_SELECTOR,
+            "body > div.cc.fon > div > div > div.hfr-m.ltab.lp-m_l-15 > div.x.lmt-15 > div.hfl-s.lt2b.lmt-10.lmb-25.lp-s_r-20 > div.hdf.ff-50.lmt-15 > div.lpl-2 > ul",
+        )
+        data2 = findWords(block2)
+        data1 += data2
+    except:
+        fileWithFails.write(url)
 
-    data1 += data2
     time.sleep(1)
 
     for wordBegin in data1:
@@ -106,8 +113,12 @@ for letter in letters:
         if wordBegin[0] == "'":
             wordWithFixedFirstElement = wordBegin[1:]
         correctWord = (
-            wordWithFixedFirstElement.replace("é", "e")
+            wordWithFixedFirstElement
+            .replace("é", "e")
+            .replace("è", "e")
+            .replace("ä", "a")
             .replace(" & ", "-")
+            .replace(" ... ", "-")
             .replace(", ", "-")
             .replace(". ", "-")
             .replace(" '", "-")
@@ -125,27 +136,28 @@ for letter in letters:
         )
         wordBeginUrl = f"{baseUrl}/{letter}/{correctWord}"
         driver.get(wordBeginUrl)
-        wordBeginBlock1 = driver.find_element(
-            By.CSS_SELECTOR,
-            "body > div.cc.fon > div > div > div.hfr-m.ltab.lp-m_l-15 > div.x.lmt-15 > div.hfl-s.lt2b.lmt-10.lmb-25.lp-s_r-20 > div.hdf.ff-50.lmt-15 > div.lc.lc6-12.lpr-2 > ul",
-        )
-        wordBeginData1 = findWordsInBegin(wordBeginBlock1)
-
-        wordBeginBlock2 = driver.find_element(
-            By.CSS_SELECTOR,
-            "body > div.cc.fon > div > div > div.hfr-m.ltab.lp-m_l-15 > div.x.lmt-15 > div.hfl-s.lt2b.lmt-10.lmb-25.lp-s_r-20 > div.hdf.ff-50.lmt-15 > div.lpl-2 > ul",
-        )
-        wordBeginData2 = findWordsInBegin(wordBeginBlock2)
-
-        wordBeginData1 += wordBeginData2
-
-        for word in wordBeginData1:
-            if re.fullmatch(rf"[A-Za-z]{lettersNumber}", word):
-                if not re.fullmatch(r"[A-Z]", word):
-                    file.write(word + "\n")
+        try:
+            wordBeginBlock1 = driver.find_element(
+                By.CSS_SELECTOR,
+                "body > div.cc.fon > div > div > div.hfr-m.ltab.lp-m_l-15 > div.x.lmt-15 > div.hfl-s.lt2b.lmt-10.lmb-25.lp-s_r-20 > div.hdf.ff-50.lmt-15 > div.lc.lc6-12.lpr-2 > ul",
+            )
+            wordBeginData1 = findWordsInBegin(wordBeginBlock1)
+            wordBeginBlock2 = driver.find_element(
+                By.CSS_SELECTOR,
+                "body > div.cc.fon > div > div > div.hfr-m.ltab.lp-m_l-15 > div.x.lmt-15 > div.hfl-s.lt2b.lmt-10.lmb-25.lp-s_r-20 > div.hdf.ff-50.lmt-15 > div.lpl-2 > ul",
+            )
+            wordBeginData2 = findWordsInBegin(wordBeginBlock2)
+            wordBeginData1 += wordBeginData2
+            for word in wordBeginData1:
+                if re.fullmatch(r"[a-zA-Z]+", word):
+                    if not re.fullmatch(r"[A-Z]+", word):
+                        fileWithWords.write(word + "\n")
+        except:
+            fileWithFails.write(wordBeginUrl)
     print(f"Complete for letter {letter}")
 
 print("All complete")
-file.close()
+fileWithWords.close()
+fileWithFails.close()
 time.sleep(1)
 driver.quit()
