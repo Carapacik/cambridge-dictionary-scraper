@@ -16,6 +16,7 @@ options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option("useAutomationExtension", False)
 options.add_argument("--ignore-certificate-errors-spki-list")
 driver = webdriver.Chrome(options=options, executable_path=chromeDriverPath)
+
 stealth(
     driver,
     languages=["en-US", "en"],
@@ -38,8 +39,6 @@ fileWithMeaningWords = open(f"{meaningFileName}.{programFileFormat}", "w")
 with open(f"{wordsFileName}.{programFileFormat}", "r") as fileWithWords:
     for word in fileWithWords:
         url = f"{baseUrl}/{word.lower()}"
-        if word.startswith("b"):
-            break
         driver.get(url)
         try:
             blockDescription = getMeaningBloc(driver)
@@ -50,7 +49,9 @@ with open(f"{wordsFileName}.{programFileFormat}", "r") as fileWithWords:
                 or blockDescriptionText.startswith("past simple")
                 or blockDescriptionText.startswith("present participle")
                 or blockDescriptionText.startswith("→")
-                or blockDescriptionText.startswith("US spelling")
+                or "US spelling of" in blockDescriptionText
+                or "UK spelling of" in blockDescriptionText
+                or "another spelling of" in blockDescriptionText
             ):
                 singularMeaningUrl = blockDescription.find_element(
                     By.TAG_NAME, "a"
@@ -58,13 +59,16 @@ with open(f"{wordsFileName}.{programFileFormat}", "r") as fileWithWords:
                 driver.get(singularMeaningUrl)
                 blockDescription = getMeaningBloc(driver)
                 blockDescriptionText = blockDescription.text
-            fixedMeaning = blockDescriptionText
+            fixedMeaning: str = blockDescriptionText
             # if ':' in the end of string
             if blockDescriptionText[-1] == ":":
                 fixedMeaning = blockDescriptionText[:-1]
+            # capitalize only first letter
+            fixedMeaning = fixedMeaning[0].upper() + fixedMeaning[1:]
+            # replace " to \" for code files
+            fixedMeaning = fixedMeaning.replace('"', '\\"')
             fileWithMeaningWords.write(
-                f'"{word[:-1].lower()}": "{fixedMeaning.capitalize()}",\n'
-            )
+                f'"{word[:-1].lower()}": "{fixedMeaning}",\n')
         except:
             # meaning of the word is not on the page
             fileWithFails.write(url)

@@ -22,5 +22,6 @@ https://chromedriver.chromium.org/
 - wordsFileName - File for all words we get
 - meaningFileName - File for all words with meanings we get 
 
-Run get_all_words.py to get all words from dictionary
-Run get_words_meaning.py to get all words meaning (You must have a completed file with the words: word.txt)
+Run `get_all_words.py` to get all words from dictionary
+
+Run `get_words_meaning.py` to get all words meaning (You must have a completed file with the words: `word.txt`)
