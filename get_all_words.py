@@ -81,15 +81,15 @@ for letter in letters:
     time.sleep(1)
     for wordBegin in data1:
         # if starts with -> '
-        wordStartWithApostrophe: str = wordBegin
+        wordStartWithApostrophe = wordBegin
         if wordBegin[0] == "'":
             wordStartWithApostrophe = wordBegin[1:]
         # if starts with -> the
-        wordStartWithThe: str = wordStartWithApostrophe
+        wordStartWithThe = wordStartWithApostrophe
         if wordStartWithApostrophe[:4].lower() == "the ":
             wordStartWithThe = wordStartWithApostrophe[4:]
         # for correct adress inn browser bar
-        correctWord: str = (
+        correctWord = (
             wordStartWithThe
             .replace("é", "e")
             .replace("è", "e")

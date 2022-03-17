@@ -42,7 +42,7 @@ with open(f"{wordsFileName}.{programFileFormat}", "r") as fileWithWords:
         driver.get(url)
         try:
             blockDescription = getMeaningBloc(driver)
-            blockDescriptionText: str = blockDescription.text
+            blockDescriptionText = blockDescription.text
             # meaning of the word on another page is the link
             if (
                 blockDescriptionText.startswith("plural of")
@@ -59,7 +59,7 @@ with open(f"{wordsFileName}.{programFileFormat}", "r") as fileWithWords:
                 driver.get(singularMeaningUrl)
                 blockDescription = getMeaningBloc(driver)
                 blockDescriptionText = blockDescription.text
-            fixedMeaning: str = blockDescriptionText
+            fixedMeaning = blockDescriptionText
             # if ':' in the end of string
             if blockDescriptionText[-1] == ":":
                 fixedMeaning = blockDescriptionText[:-1]
