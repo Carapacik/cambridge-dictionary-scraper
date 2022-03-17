@@ -8,37 +8,11 @@ from typing import Final
 baseUrl: Final = r"https://dictionary.cambridge.org/browse/english"
 chromeDriverPath: Final = r"C:/Users/User/Documents/chromedriver.exe"
 lettersNumber: Final = 5
-failsFileName: Final = "fails"
-wordsFileName: Final = "words"
-wordsFileFormat: Final = "txt"
-letters: Final = [
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "k",
-    "l",
-    "m",
-    "n",
-    "o",
-    "p",
-    "q",
-    "r",
-    "s",
-    "t",
-    "u",
-    "v",
-    "w",
-    "x",
-    "y",
-    "z",
-]
+failsFileName: Final = "word_fails"
+wordsFileName: Final = "word"
+programFileFormat: Final = "txt"
+letters: Final = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
+                  "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
 options = webdriver.ChromeOptions()
 options.add_argument("start-maximized")
@@ -81,8 +55,8 @@ def findWordsInBegin(wordBeginBlock):
     return data
 
 
-fileWithFails = open(f"{failsFileName}.{wordsFileFormat}", "w")
-fileWithWords = open(f"{wordsFileName}.{wordsFileFormat}", "w")
+fileWithFails = open(f"{failsFileName}.{programFileFormat}", "w")
+fileWithWords = open(f"{wordsFileName}.{programFileFormat}", "w")
 for letter in letters:
     url = f"{baseUrl}/{letter}/"
     driver.get(url)
@@ -116,7 +90,8 @@ for letter in letters:
             wordStartWithThe = wordStartWithApostrophe[4:]
         # for correct adress inn browser bar
         correctWord: str = (
-            wordStartWithThe.replace("é", "e")
+            wordStartWithThe
+            .replace("é", "e")
             .replace("è", "e")
             .replace("ä", "a")
             .replace(" & ", "-")
@@ -160,7 +135,6 @@ for letter in letters:
             fileWithFails.write(wordBeginUrl + "\n")
     print(f"Complete for letter {letter}")
 
-print("All complete")
 fileWithWords.close()
 fileWithFails.close()
 time.sleep(1)
