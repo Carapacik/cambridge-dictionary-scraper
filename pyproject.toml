@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cambridge-dictionary-scraper"
+version = "1.0.0"
+description = "Scrape English words and meanings from Cambridge Dictionary"
+readme = "README.md"
+requires-python = ">=3.14"
+[project.scripts]
+cambridge-scraper = "cambridge_dictionary_scraper.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
