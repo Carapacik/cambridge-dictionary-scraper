@@ -2,7 +2,7 @@
 
 Get words from dictionary.cambridge.org
 
-Used this to get dictionary for [Wordle App](https://github.com/Carapacik/Wordle)
+Used this to get dictionary for my [Wordly Game](https://github.com/Carapacik/WordlyPlus)
 
 ## Install
 Python 3.5 or higher is required
