@@ -78,6 +78,7 @@ for letter in letters:
         data1 += data2
     except:
         fileWithFails.write(url + "\n\n")
+        data1 = []
     time.sleep(1)
     for wordBegin in data1:
         # if starts with -> '
@@ -133,7 +134,10 @@ for letter in letters:
                         fileWithWords.write(word + "\n")
         except:
             fileWithFails.write(wordBeginUrl + "\n")
-    print(f"Complete for letter {letter}")
+    if not data1:
+        print(f"Error with letter: {letter}")
+    else:
+        print(f"Complete for letter: {letter}")
 
 fileWithWords.close()
 fileWithFails.close()
